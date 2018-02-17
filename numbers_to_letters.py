@@ -33,7 +33,7 @@ while n < len(scale):
 	if scale_spelled[n][0] == scale_spelled[n - 1][0]:
 		print scale_spelled[n]
 		#scale_spelled[n] = alternate_accidentals[n]
-		print "WWO"
+		print "what about them damn accidentals?"
 	n = n + 1
 
 print scale_spelled
