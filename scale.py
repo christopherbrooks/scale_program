@@ -5,49 +5,50 @@ import random
 
 def scale(number_of_octaves):
 # return notes for scale types
-	scale = {'diatonic': ['c ', 'd ', 'e ', 'f ', 'g ', 'a ', 'b ', 'c '], 
-	'harm_maj': ['c ', 'd ', 'e ', 'f ', 'g ', 'aes ', 'b ', 'c '], 
-	'harm_min': ['c ', 'd ', 'ees ', 'f ','g ', 'aes ', 'b ','c '], 
-	'acoustic': ['c ', 'd ', 'e ', 'fis ', 'g ', 'a ' 'bes ', 'c '],
-	'hexatonic': ['c ', 'des ', 'e ', 'f ', 'gis ' ,'a ','c '],
-	'octatonic': ['c ', 'des ', 'ees ' 'e ', 'fis ', 'g ', 'a ', 'bes ', 'c '],
-	'whole tone': ['c ', 'd ', 'e ', 'fis ' ,'gis ' ,'ais ', 'c '],
-	'chromatic': ['c ','cis ', 'd ' ,'ees ', 'e ', 'f ', 'fis ' ,'g ' ,'gis ' ,'a ' ,'bes ' ,'b ' ,'c '] }
+	scale = {'diatonic': [1 , 3, 5, 6, 8, 10, 12, 13], 
+	'harm_maj': [1, 3, 5, 6, 8, 9, 12, 13], 
+	'harm_min': [1, 3, 4, 6, 8, 9, 12, 13], 
+	'acoustic': [1, 3, 5, 7, 8, 10, 11, 13],
+	'hexatonic': [1, 2, 5, 6, 9 ,10, 13],
+	'octatonic': [1, 2, 4, 5, 7, 8, 10, 11, 13],
+	'whole tone': [1, 3, 5, 7 ,9 ,11, 13],
+	'chromatic': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,13] }
 
 	types_of_scales = scale.keys()
 	type_of_scale = random.sample(types_of_scales, 1)
 	print type_of_scale[0]
 	full_scale_list = scale.get(type_of_scale[0])
+
 	
 # scale can start on any note
 	n = random.randint(0, len(full_scale_list) - 1)
 	full_scale_list = full_scale_list[n:] + full_scale_list[1 : n]
 
+# scale can be transposed to any octave
+	k = random.randint(0, 12)
+	for l in range(len(full_scale_list)):
+		full_scale_list[l] = (full_scale_list[l] + k) % 12
+
 # scale can have 1 through 4 octaves
 	for i in range(1, number_of_octaves):
 		full_scale_list = full_scale_list + full_scale_list
 	full_scale_list = full_scale_list + full_scale_list[0 : 1]
-# return frequency of tonic
-	
+
+# return frequency of tonic	
 	frequencies = {
-   'c ': 130.81, 
-   'cis ': 138.59,
-   'des ': 138.59,
-   'd ': 146.83,
-   'dis ': 155.56,
-   'ees ': 155.56,
-   'e ': 164.81,
-   'f ': 174.61, 
-   'fis ': 185.00,
-   'ges ': 185.00,
-   'g ': 196.00,
-   'gis ': 207.65,
-   'aes ': 207.65,
-   'a ': 220.00,
-   'ais ': 233.08,
-   'bes ': 233.08,
-   'b ': 246.94,
-   'c ': 261.63,
+   1 : 130.81, # c
+   2 : 138.59,  # c#, db
+   3 : 146.83, # d
+   4 : 155.56, # d# eb
+   5 : 164.81, # e
+   6 : 174.61, # f
+   7 : 185.00, # f# gb
+   8 : 196.00, # g
+   9 : 207.65, # g# ab
+   10 : 220.00, # a
+   11 : 233.08, # a# bb
+   12 : 246.94, # b
+   13 : 261.63, # c
  }
 
 	tonic_frequency = frequencies[full_scale_list[0]]
@@ -57,10 +58,9 @@ def scale(number_of_octaves):
 	# print "tonic: ", scale.keys()
 
 	#print full_scale_list
-# returns scale as string
-	full_scale = ''.join(full_scale_list)
 
-	return full_scale, tonic_frequency
+
+	return full_scale_list, tonic_frequency
 
 
 # play a fixed frequency sound
@@ -104,7 +104,9 @@ while True:
 	if 0 < number_of_octaves <= 4:
 		break
 full_scale = scale(number_of_octaves)
+print full_scale[1]
 # scale notes
 print full_scale[0]
+
 # pitch of tonic
 sine_tone(full_scale[1], 3)
