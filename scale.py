@@ -48,20 +48,35 @@ def scale(number_of_octaves):
    10 : 220.00, # a
    11 : 233.08, # a# bb
    12 : 246.94, # b
-   13 : 261.63, # c
- }
+   13 : 261.63, } # c}
 
 	tonic_frequency = frequencies[full_scale_list[0]]
 	#print full_scale_list[0]
 	
+	# note names with more common accidentals
+	names = {
+   		0 : 'c ', # c
+   		1 : 'cis ',  # c#, db
+   		2 : 'd ', # d
+   		3 : 'ees ', # d# eb
+   		4 : 'e ', # e
+   		5 : 'f ', # f
+   		6 : 'fis ', # f# gb
+   		7 : 'g ', # g
+   		8 : 'aes ', # g# ab
+   		9 : 'a ', # a
+   		10 : 'bes ', # a# bb
+   		11 : 'b ', # b
+   		12 : 'c ', # c
+ 		}
+
+ 	scale_spelled = []
+ 	n = 0
+	while n < len(full_scale_list):
+		scale_spelled.append(names[full_scale_list[n]])	
+		n = n + 1
 	
-	# print "tonic: ", scale.keys()
-
-	#print full_scale_list
-
-
-	return full_scale_list, tonic_frequency
-
+	return scale_spelled, tonic_frequency
 
 # play a fixed frequency sound
 def sine_tone(frequency, duration, volume=1, sample_rate=22050):
@@ -104,9 +119,12 @@ while True:
 	if 0 < number_of_octaves <= 4:
 		break
 full_scale = scale(number_of_octaves)
-print full_scale[1]
+
 # scale notes
-print full_scale[0]
+
+scale = ''.join(full_scale[0])
+print scale
 
 # pitch of tonic
+print full_scale[1]
 sine_tone(full_scale[1], 3)
