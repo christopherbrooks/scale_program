@@ -34,6 +34,9 @@ def scale(number_of_octaves):
 		full_scale_list = full_scale_list + full_scale_list
 	full_scale_list = full_scale_list + full_scale_list[0 : 1]
 
+#scale goes up and down
+	full_scale_list = full_scale_list + full_scale_list[::-1]
+
 # return frequency of tonic	
 	frequencies = {
    1 : 130.81, # c
@@ -119,6 +122,7 @@ while True:
 	if 0 < number_of_octaves <= 4:
 		break
 full_scale = scale(number_of_octaves)
+print full_scale[0]
 
 # scale notes
 
