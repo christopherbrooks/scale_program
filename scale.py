@@ -18,7 +18,6 @@ def scale(number_of_octaves):
 	type_of_scale = random.sample(types_of_scales, 1)
 	print type_of_scale[0]
 	full_scale_list = scale.get(type_of_scale[0])
-
 	
 # scale can start on any note
 	n = random.randint(0, len(full_scale_list) - 1)
@@ -54,7 +53,6 @@ def scale(number_of_octaves):
    13 : 261.63, } # c}
 
 	tonic_frequency = frequencies[full_scale_list[0]]
-	#print full_scale_list[0]
 	
 	# note names with more common accidentals
 	names = {
@@ -73,15 +71,17 @@ def scale(number_of_octaves):
    		12 : 'c ', # c
  		}
 
+# transform numbered steps to scale names
  	scale_spelled = []
  	n = 0
 	while n < len(full_scale_list):
 		scale_spelled.append(names[full_scale_list[n]])	
 		n = n + 1
-	
+
+
 	return scale_spelled, tonic_frequency
 
-# play a fixed frequency sound
+# play a fixed frequency sound, used to sound tonic
 def sine_tone(frequency, duration, volume=1, sample_rate=22050):
     assert isinstance(frequency, float)
     assert isinstance(duration, int)
@@ -109,12 +109,58 @@ def sine_tone(frequency, duration, volume=1, sample_rate=22050):
         # fill remainder of frameset with silence
         stream.write(b'\x80' * restframes)
         
-
     finally:
         stream.stop_stream()
         stream.close()
         p.terminate()
 
+# add rhthms
+
+def rhythm(scale):
+	rhythmic_subdivisions = {2: "2 ", 1.5: "4. ", 1.0: "4 ", 0.75: "8. ", 0.5: "8 ", 0.25: "16 "}
+
+# generate rhythmic subdivision
+
+# number of notes in rhythmic subdivision has to be even divisor of number of notes in scale
+	number_of_notes = random.randint(1,8)
+
+	while len(scale) % number_of_notes != 0:
+		number_of_notes = random.randint(1,8)
+	
+	rhythmic_pattern = []
+	pattern_duration = 0
+
+	for l in range(number_of_notes):
+		k = random.randint(0, len(rhythmic_subdivisions)-1)
+		note_value = rhythmic_subdivisions.values()[k]
+		rhythmic_pattern.append(note_value)
+		note_duration = rhythmic_subdivisions.keys()[k]
+		pattern_duration = pattern_duration + note_duration
+
+# figure time signature
+
+	while pattern_duration % .5 != 0:
+		pattern_duration += pattern_duration
+
+	if pattern_duration % 1 == 0:
+		beats_per_bar = pattern_duration
+		beat = 4
+	elif pattern_duration % .5 == 0:
+		beats_per_bar = pattern_duration * 2
+		beat = 8
+	else:
+		beats_per_bar = pattern_duration * 4
+		beat = 16
+
+#enter the rhythmic pattern into the scale
+	i = 1
+	print len(scale)
+	while i < len(scale):
+		n = i % len(rhythmic_pattern)
+		scale.insert(i, rhythmic_pattern[n])
+		i += 2
+
+	return scale
 
 # Main Body of Program input number of octave and call scale function
 while True:
@@ -122,12 +168,24 @@ while True:
 	if 0 < number_of_octaves <= 4:
 		break
 full_scale = scale(number_of_octaves)
-print full_scale[0]
 
-# scale notes
+#add rhythms to scale
+full_scale = rhythm(full_scale)
+
+# collapse into string to print to lilypond
 
 scale = ''.join(full_scale[0])
+
+beats_per_bar = 3
+beat = 8
+
+print '\\version \"2.18.2\"'
+print "\\relative c'"
+print '{'
+print '\\time',
+print '{}/{}'.format(int(beats_per_bar), beat)
 print scale
+print '}'
 
 # pitch of tonic
 print full_scale[1]

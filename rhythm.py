@@ -42,11 +42,13 @@ else:
 
 
 #enter the rhythmic pattern into the scale
+print rhythmic_pattern
+print scale
 i = 1
 while i < len(scale):
     n = i % len(rhythmic_pattern)
     scale.insert(i, rhythmic_pattern[n])
-    i += (2)
+    i += 2
 
 scale = ''.join(scale)
 
