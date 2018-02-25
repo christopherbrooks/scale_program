@@ -78,7 +78,6 @@ def scale(number_of_octaves):
 		scale_spelled.append(names[full_scale_list[n]])	
 		n = n + 1
 
-
 	return scale_spelled, tonic_frequency
 
 # play a fixed frequency sound, used to sound tonic
@@ -153,6 +152,8 @@ def rhythm(scale):
 		beat = 16
 
 #enter the rhythmic pattern into the scale
+	print rhythmic_pattern
+	print scale
 	i = 1
 	print len(scale)
 	while i < len(scale):
@@ -162,6 +163,11 @@ def rhythm(scale):
 
 	return scale
 
+def slurs(scale):
+
+	#needs some guts here
+	return slurs
+
 # Main Body of Program input number of octave and call scale function
 while True:
 	number_of_octaves = input("How many octaves?")
@@ -170,11 +176,15 @@ while True:
 full_scale = scale(number_of_octaves)
 
 #add rhythms to scale
-full_scale = rhythm(full_scale)
+full_scale = rhythm(full_scale[0])
+
+#add slurs to scale
+
+full_scale = slurs(full_scale)
 
 # collapse into string to print to lilypond
 
-scale = ''.join(full_scale[0])
+scale = ''.join(full_scale)
 
 beats_per_bar = 3
 beat = 8
