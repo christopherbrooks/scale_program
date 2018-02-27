@@ -1,8 +1,6 @@
 
 import random
 
-
-
 # generate bowing patterns
 
 # number of notes in bow pattern has to be even divisor of number of notes in scale
@@ -11,7 +9,6 @@ def slurs(scale):
 	while len(scale) % length_bow_pattern != 0:
 		length_bow_pattern = random.randint(1, len(scale)-1)
 
-	print "lenght of bow pattern:", length_bow_pattern
 # a bow pattern may or may not contain slurs
 # slurs start with '[ ' any note can start a slur except the last in a bow pattern
 # every '[ ' requires a '] ' any note can end a slur except the first in a bow pattern
@@ -20,7 +17,6 @@ def slurs(scale):
 		bow_pattern.append(random.randint(0,1))
 		k += 1
  
-	print len(bow_pattern)
 #for l in range (len.bow_pattern):
 	if len(bow_pattern) == 1:
 		bow_pattern[0] = 0
@@ -34,10 +30,10 @@ def slurs(scale):
 		if bow_pattern[k] == 0:
 			bow_pattern[k] = ' '
 		elif  bow_pattern[k] == 1 and begin_or_end == 'end':
-			bow_pattern[k] = '[ '
+			bow_pattern[k] = '( '
 			begin_or_end = 'begin'
 		elif  bow_pattern[k] == 1 and begin_or_end == 'begin':
-			bow_pattern[k] = '] '
+			bow_pattern[k] = ')'
 			begin_or_end = 'end'
 
 	return bow_pattern

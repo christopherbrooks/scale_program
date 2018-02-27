@@ -16,7 +16,6 @@ def scale(number_of_octaves):
 
 	types_of_scales = scale.keys()
 	type_of_scale = random.sample(types_of_scales, 1)
-	print type_of_scale[0]
 	full_scale_list = scale.get(type_of_scale[0])
 	
 # scale can start on any note
@@ -38,19 +37,19 @@ def scale(number_of_octaves):
 
 # return frequency of tonic	
 	frequencies = {
-   1 : 130.81, # c
-   2 : 138.59,  # c#, db
-   3 : 146.83, # d
-   4 : 155.56, # d# eb
-   5 : 164.81, # e
-   6 : 174.61, # f
-   7 : 185.00, # f# gb
-   8 : 196.00, # g
-   9 : 207.65, # g# ab
-   10 : 220.00, # a
-   11 : 233.08, # a# bb
-   12 : 246.94, # b
-   13 : 261.63, } # c}
+   0 : 130.81, # c
+   1 : 138.59,  # c#, db
+   2 : 146.83, # d
+   3 : 155.56, # d# eb
+   4 : 164.81, # e
+   5 : 174.61, # f
+   6 : 185.00, # f# gb
+   7 : 196.00, # g
+   8 : 207.65, # g# ab
+   9 : 220.00, # a
+   10 : 233.08, # a# bb
+   11 : 246.94, # b
+   12 : 261.63, } # c}
 
 	tonic_frequency = frequencies[full_scale_list[0]]
 	
@@ -78,7 +77,7 @@ def scale(number_of_octaves):
 		scale_spelled.append(names[full_scale_list[n]])	
 		n = n + 1
 
-	return scale_spelled, tonic_frequency
+	return scale_spelled, tonic_frequency, type_of_scale[0]
 
 # play a fixed frequency sound, used to sound tonic
 def sine_tone(frequency, duration, volume=1, sample_rate=22050):
@@ -113,12 +112,9 @@ def sine_tone(frequency, duration, volume=1, sample_rate=22050):
         stream.close()
         p.terminate()
 
-# add rhthms
-
+# generate rhythmic patterns and time signiture
 def rhythm(scale):
 	rhythmic_subdivisions = {2: "2 ", 1.5: "4. ", 1.0: "4 ", 0.75: "8. ", 0.5: "8 ", 0.25: "16 "}
-
-# generate rhythmic subdivision
 
 # number of notes in rhythmic subdivision has to be even divisor of number of notes in scale
 	number_of_notes = random.randint(1,8)
@@ -137,7 +133,6 @@ def rhythm(scale):
 		pattern_duration = pattern_duration + note_duration
 
 # figure time signature
-
 	while pattern_duration % .5 != 0:
 		pattern_duration += pattern_duration
 
@@ -151,50 +146,92 @@ def rhythm(scale):
 		beats_per_bar = pattern_duration * 4
 		beat = 16
 
-#enter the rhythmic pattern into the scale
-	print rhythmic_pattern
-	print scale
-	i = 1
-	print len(scale)
-	while i < len(scale):
-		n = i % len(rhythmic_pattern)
-		scale.insert(i, rhythmic_pattern[n])
-		i += 2
+	if beats_per_bar <= 3:
+		beats_per_bar = beats_per_bar * 2
 
-	return scale
+	return rhythmic_pattern, beats_per_bar, beat
 
+# generate bowing patterns consisting of slurs and separate notes
+# number of notes in bow pattern has to be even divisor of number of notes in scale
 def slurs(scale):
+	length_bow_pattern = random.randint(1, len(scale)-1) #slur pattern includes slured and separate notes
+	while len(scale) % length_bow_pattern != 0:
+		length_bow_pattern = random.randint(1, len(scale)-1)
 
-	#needs some guts here
-	return slurs
+# a bow pattern may or may not contain slurs
+# slurs start with '[ ' any note can start a slur except the last in a bow pattern
+# every '[ ' requires a '] ' any note can end a slur except the first in a bow pattern
+	bow_pattern = []
+	for k in range(length_bow_pattern):
+		bow_pattern.append(random.randint(0,1))
+		k += 1
+ 
+#for l in range (len.bow_pattern):
+	if len(bow_pattern) == 1:
+		bow_pattern[0] = 0
+	if sum(bow_pattern) % 2 == 1:
+		bow_pattern[-1] = 0
+
+	print bow_pattern
+
+	begin_or_end = 'end' #slur
+	for k in range(len(bow_pattern)):
+		if bow_pattern[k] == 0:
+			bow_pattern[k] = ' '
+		elif  bow_pattern[k] == 1 and begin_or_end == 'end':
+			bow_pattern[k] = '( '
+			begin_or_end = 'begin'
+		elif  bow_pattern[k] == 1 and begin_or_end == 'begin':
+			bow_pattern[k] = ') '
+			begin_or_end = 'end'
+
+	return bow_pattern
 
 # Main Body of Program input number of octave and call scale function
 while True:
 	number_of_octaves = input("How many octaves?")
 	if 0 < number_of_octaves <= 4:
 		break
+
 full_scale = scale(number_of_octaves)
 
-#add rhythms to scale
-full_scale = rhythm(full_scale[0])
+#note that scale returns notes: full_scale[0] and frequency full_scale[1]
+#get rhythms for scale
+rhythmic_pattern = rhythm(full_scale[0])
 
-#add slurs to scale
+#get slurs for scale
+slurs = slurs(full_scale[0])
 
-full_scale = slurs(full_scale)
+#add rhythms and slurs to scale
+i = 1
+while i < len(full_scale[0]):
+	n = i % len(rhythmic_pattern[0])
+	full_scale[0].insert(i, rhythmic_pattern[0][n])
+	i += 2
 
-# collapse into string to print to lilypond
+# insert slurs
+i = 2
+while i < len(full_scale[0]):
+	if n >= len(slurs):
+		n = 0
+	full_scale[0].insert(i , slurs[n])
+	i += 3
+	n += 1
 
-scale = ''.join(full_scale)
+scale = ''.join(full_scale[0])
 
-beats_per_bar = 3
-beat = 8
+print full_scale[2] #type of scale
 
+#format for lilypond
 print '\\version \"2.18.2\"'
 print "\\relative c'"
 print '{'
 print '\\time',
-print '{}/{}'.format(int(beats_per_bar), beat)
+print '{}/{}'.format(int(rhythmic_pattern[1]), rhythmic_pattern[2])
 print scale
+print '}'
+print '\\header {'
+print 'subtitle = \"{}, tonic: {}\"'.format(full_scale[2], full_scale[0][0])
 print '}'
 
 # pitch of tonic
