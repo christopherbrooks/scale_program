@@ -2,6 +2,7 @@ from __future__ import division
 import math
 from pyaudio import PyAudio  # sudo apt-get install python{,3}-pyaudio
 import random
+import os
 
 def scale(number_of_octaves):
 # return notes for scale types
@@ -222,18 +223,30 @@ scale = ''.join(full_scale[0])
 
 print full_scale[2] #type of scale
 
-#format for lilypond
-print '\\version \"2.18.2\"'
-print "\\relative c'"
-print '{'
-print '\\time',
-print '{}/{}'.format(int(rhythmic_pattern[1]), rhythmic_pattern[2])
-print scale
-print '}'
-print '\\header {'
-print 'subtitle = \"{}, tonic: {}\"'.format(full_scale[2], full_scale[0][0])
-print '}'
-
 # pitch of tonic
 print full_scale[1]
 sine_tone(full_scale[1], 3)
+
+#format for lilypond and print
+os.remove("lily_scale.ly")
+lilyfile = open('lily_scale.ly', 'a') 
+lilyfile.write('\\version \"2.18.2\" \n')
+lilyfile.write("\\relative c' \n")
+lilyfile.write('{ \n')
+lilyfile.write('\\time \n')
+lilyfile.write('{}/{} \n'.format(int(rhythmic_pattern[1]), rhythmic_pattern[2]))
+lilyfile.write('{}\n'.format(scale))
+lilyfile.write('} \n')
+lilyfile.write('\\header { \n')
+lilyfile.write('subtitle = \"{}, tonic: {}\"\n'.format(full_scale[2], full_scale[0][0]))
+lilyfile.write('}')
+
+lilyfile = open('lily_scale.ly', 'r')
+
+print lilyfile.read()
+lilyfile.close()
+
+os.system("lilypond lily_scale.ly")
+
+#op open a pdf reader
+os.system("open lily_scale.pdf")
