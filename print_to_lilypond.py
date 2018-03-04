@@ -25,8 +25,6 @@ lilyfile.close()
 
 os.system("lilypond lily_scale.ly")
 
-import webbrowser
-
-#looking for a way to pop open a pdf reader
-webbrowser.open_new(r'lily_scale.pdf')
+#op open a pdf reader
+os.system("open lily_scale.pdf")
 
