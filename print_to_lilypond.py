@@ -1,30 +1,32 @@
 import os
 
-os.remove("lily_scale.ly")
 
-rhythmic_pattern = ('a', 3, 4)
-scale = 'a b c des e fis g'
-full_scale = ('acoustic', '1', 'c')
+def write_lilypond(beats_per_bar, beat, scale_spelled, type_of_scale):
+    os.remove("lily_scale.ly")
 
-lilyfile = open('lily_scale.ly', 'a') 
-lilyfile.write('\\version \"2.18.2\" \n')
-lilyfile.write("\\relative c' \n")
-lilyfile.write('{ \n')
-lilyfile.write('\\time \n')
-lilyfile.write('{}/{} \n'.format(int(rhythmic_pattern[1]), rhythmic_pattern[2]))
-lilyfile.write('{}\n'.format(scale))
-lilyfile.write('} \n')
-lilyfile.write('\\header { \n')
-lilyfile.write('subtitle = \"{}, tonic: {}\"\n'.format(full_scale[2], full_scale[0][0]))
-lilyfile.write('}')
+    with open('lily_scale.ly', 'a') as lilyfile:
+        lilyfile.write('\\version \"2.18.2\" \n')
+        lilyfile.write("\\relative c' \n")
+        lilyfile.write('{ \n')
+        lilyfile.write('\\time \n')
+        lilyfile.write('{}/{} \n'.format(beats_per_bar, beat))
+        lilyfile.write('{}\n'.format(scale))
+        lilyfile.write('} \n')
+        lilyfile.write('\\header { \n')
+        lilyfile.write('subtitle = \"{}, tonic: {}\"\n'.format(type_of_scale, scale_spelled))
+        lilyfile.write('}')
 
-lilyfile = open('lily_scale.ly', 'r')
+    with open('lily_scale.ly', 'r') as lilyfile:
+        print lilyfile.read()
 
-print lilyfile.read()
-lilyfile.close()
+    os.system("lilypond lily_scale.ly")
 
-os.system("lilypond lily_scale.ly")
+    # op open a pdf reader
+    os.system("open lily_scale.pdf")
 
-#op open a pdf reader
-os.system("open lily_scale.pdf")
 
+if __name__ == '__main__':
+    # rhythmic_pattern = ('a', 3, 4)
+    # full_scale = ('acoustic', '1', 'c')
+    scale = 'a b c des e fis g'
+    write_lilypond(3, 4, 'acoustic', scale)
